@@ -1,9 +1,16 @@
+const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
 const Blockchain = require('./blockchain.js').Blockchain;
 const blockchain = new Blockchain();
 
-const server = app.listen(3000, () => {
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
+
+
+const server = app.listen(5000, () => {
     console.log('http://localhost:' + server.address().port);
 });
 
@@ -31,22 +38,28 @@ app.get('/mine', (req, res) => {
         transactions: block.transactions,
         proof: block.proof,
         previousHash: block.previousHash
-    })
+    });
 });
 
 app.get('/chain', (req, res) => {
     res.send({
         chain: blockchain.chain,
         length: blockchain.chain.length
-    })
-});
-
-app.get('/nodes/resolve', (req, res) => {
-
+    });
 });
 
 app.post('/transactions/new', (req, res) => {
+    console.log(req.body);
 
+    const index = blockchain.createNewTransaction(
+        req.body.sender,
+        req.body.recipient,
+        req.body.amount
+    );
+
+    res.send({
+        message: `Transaction will be added to block ${index}`
+    });
 });
 
 

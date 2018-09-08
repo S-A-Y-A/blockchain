@@ -55,7 +55,9 @@ class Blockchain {
             amount: amount
         });
 
-        return this.lastBlock.index + 1;
+        const index = this.lastBlock == null ? 0 : this.lastBlock.index;
+
+        return index + 1;
     }
 
     static getBlockHash(block) {
